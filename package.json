@@ -1,0 +1,22 @@
+{
+  "name": "token-dashboard",
+  "version": "1.0.0",
+  "description": "Minimal token dashboard with ERC20 faucet",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "ganache": "ganache --port 7545 --chainId 1337 --host 127.0.0.1",
+    "backend": "cd backend && node server.js",
+    "frontend": "cd frontend && npm run dev"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.0",
+    "dotenv": "^16.3.1",
+    "ganache": "^7.9.1"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0"
+  }
+}
+
