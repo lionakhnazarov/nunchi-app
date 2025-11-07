@@ -5,7 +5,7 @@
   "scripts": {
     "compile": "hardhat compile",
     "deploy:local": "hardhat run scripts/deploy.js --network localhost",
-    "ganache": "ganache",
+    "ganache": "ganache --port 7545",
     "backend": "cd backend && node server.js",
     "frontend": "cd frontend && npm run dev"
   },
