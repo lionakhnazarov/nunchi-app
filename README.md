@@ -61,11 +61,15 @@ npm run backend
 npm run frontend
 ```
 
+### Setup Metamask
+- add local Ganache network (Rpc Url: http://127.0.0.1:7545; Chain ID: 1337)
+- import Ganache wallet (private key from .env)
+
 Open `http://localhost:3000` in your browser.
 
 ## Usage
 
-1. **Connect MetaMask**: Click "Connect MetaMask Wallet" - the app will automatically add Ganache network (Chain ID: 1337)
+1. **Connect MetaMask**: Click "Connect MetaMask Wallet" 
 2. **Request Tokens**: Enter an address and click "Request Tokens (Faucet)"
 3. **Check Balance**: Enter an address to view token balance
 4. **Transfer Tokens**: Connect wallet, enter recipient and amount, then click "Transfer"

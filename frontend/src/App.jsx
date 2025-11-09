@@ -104,63 +104,15 @@ function App() {
         const expectedChainId = 1337n
         
         if (network.chainId !== expectedChainId) {
-          const networkName = 'Ganache Local (Port 7545)'
-          
-          try {
-            try {
-              await window.ethereum.request({
-                method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x539' }]
-              })
-              const accounts = await provider.send("eth_requestAccounts", [])
-              setWalletAddress(accounts[0])
-              setConnected(true)
-              return
-            } catch (switchError) {
-              if (switchError.code === 4902) {
-                await window.ethereum.request({
-                  method: 'wallet_addEthereumChain',
-                  params: [{
-                    chainId: '0x539',
-                    chainName: 'Ganache Local',
-                    nativeCurrency: {
-                      name: 'Ether',
-                      symbol: 'ETH',
-                      decimals: 18
-                    },
-                    rpcUrls: ['http://127.0.0.1:7545'],
-                    blockExplorerUrls: []
-                  }]
-                })
-                await window.ethereum.request({
-                  method: 'wallet_switchEthereumChain',
-                  params: [{ chainId: '0x539' }]
-                })
-                const accounts = await provider.send("eth_requestAccounts", [])
-                setWalletAddress(accounts[0])
-                setConnected(true)
-                return
-              } else {
-                throw switchError
-              }
-            }
-          } catch (switchError) {
-            console.error('Network switch error:', switchError)
-            setError(`Please switch MetaMask to ${networkName} (Chain ID: ${expectedChainId}). ${switchError.message || ''}`)
-            return
-          }
-        }
-        
-        const accounts = await provider.send("eth_requestAccounts", [])
-        setWalletAddress(accounts[0])
-        setConnected(true)
-      } catch (err) {
-        console.error('Wallet connection error:', err)
-        if (err.code === 4902) {
           setError('Please add the Ganache Local network to MetaMask (Chain ID: 1337)')
+          setConnected(false)
         } else {
-          setError('Failed to connect wallet: ' + (err.message || 'Unknown error'))
+          const accounts = await provider.send("eth_requestAccounts", [])
+          setWalletAddress(accounts[0])
+          setConnected(true)
         }
+      } catch (err) {
+        setError('Failed to connect wallet: ' + (err.message || 'Unknown error'))
       }
     } else {
       setError('MetaMask is not installed')
@@ -208,15 +160,6 @@ function App() {
         return
       }
       
-      try {
-        const gasEstimate = await contract.transfer.estimateGas(transferTo, amountWei)
-        console.log('Gas estimate:', gasEstimate.toString())
-      } catch (estimateError) {
-        console.error('Gas estimation error:', estimateError)
-        setLoading(false)
-        return
-      }
-      
       const tx = await contract.transfer(transferTo, amountWei, {
         gasLimit: 100000
       })
@@ -227,34 +170,7 @@ function App() {
       setTransferTo('')
       setTransferAmount('')
     } catch (err) {
-      let errorMessage = 'Transfer failed'
-      
-      try {
-        const normalizedTransferTo = ethers.getAddress(transferTo)
-        const normalizedWalletAddress = ethers.getAddress(walletAddress)
-        if (normalizedTransferTo === normalizedWalletAddress) {
-          errorMessage = 'Cannot transfer tokens to yourself'
-          setError(errorMessage)
-          setLoading(false)
-          return
-        }
-      } catch (e) {console.error('Address validation failed:', e)}
-      
-      if (err.data) {
-        if (err.data.startsWith('0xe450d38c')) {
-          errorMessage = 'Insufficient token balance'
-        } else {
-          errorMessage = err.reason || err.message || 'Transaction failed'
-        }
-      } else if (err.reason) {
-        errorMessage = err.reason
-      } else if (err.message) {
-          errorMessage = err.message
-      } else if (err.error) {
-        errorMessage = err.error.message || 'Transaction failed'
-      }
-      
-      setError(errorMessage)
+      setError('Transfer failed')
     } finally {
       setLoading(false)
     }
